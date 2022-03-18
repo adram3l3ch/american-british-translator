@@ -48,6 +48,7 @@ module.exports = {
 	'district attorney': 'Crown Prosecutor',
 	'divided highway': 'dual carriageway',
 	doctor: 'dr.',
+	'dr ': 'dr.',
 	doohickey: 'wotsit',
 	downspout: 'drainpipe',
 	drape: 'curtain',

@@ -74,7 +74,9 @@ class Translator {
 				let result;
 				if (dot) result = wordArray.join(' ') + '.';
 				else result = wordArray.join(' ');
-				return result[0].toUpperCase() + result.slice(1);
+				return result[0] === '<'
+					? result.slice(0, 24) + result[24].toUpperCase() + result.slice(25)
+					: result[0].toUpperCase() + result.slice(1);
 			},
 		};
 	}

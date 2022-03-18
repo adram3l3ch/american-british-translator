@@ -243,4 +243,5 @@ module.exports = {
 	'y-fronts': 'briefs',
 	'zebra crossing': 'crosswalk',
 	doctor: 'dr',
+	'dr.': 'dr',
 };
