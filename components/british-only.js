@@ -242,6 +242,6 @@ module.exports = {
 	'wing mirrors': 'side mirrors',
 	'y-fronts': 'briefs',
 	'zebra crossing': 'crosswalk',
-	doctor: 'dr',
-	'dr.': 'dr',
+	doctor: 'dr.',
+	dr: 'dr.',
 };

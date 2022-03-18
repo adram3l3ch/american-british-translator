@@ -23,27 +23,37 @@ class Translator {
 	}
 
 	britishTime(string) {
-		if (/\d\d:\d\d/.test(string)) {
-			let index = string.match(/\d\d:\d\d/).index;
-			string =
-				string.slice(0, index) +
-				this.wrapInSpan(
-					string.slice(index, index + 2) + '.' + string.slice(index + 3, index + 5)
-				) +
-				string.slice(index + 5);
+		if (/\d{1,2}:\d\d/.test(string)) {
+			let index = string.match(/\d{1,2}:\d\d/).index;
+			string = /\d\d.\d\d/.test(string)
+				? string.slice(0, index) +
+				  this.wrapInSpan(
+						string.slice(index, index + 2) + '.' + string.slice(index + 3, index + 5)
+				  ) +
+				  string.slice(index + 5)
+				: string.slice(0, index) +
+				  this.wrapInSpan(
+						string.slice(index, index + 1) + '.' + string.slice(index + 2, index + 4)
+				  ) +
+				  string.slice(index + 4);
 		}
 		return string;
 	}
 
 	americanTime(string) {
-		if (/\d\d.\d\d/.test(string)) {
-			let index = string.match(/\d\d.\d\d/).index;
-			string =
-				string.slice(0, index) +
-				this.wrapInSpan(
-					string.slice(index, index + 2) + ':' + string.slice(index + 3, index + 5)
-				) +
-				string.slice(index + 5);
+		if (/\d{1,2}.\d\d/.test(string)) {
+			let index = string.match(/\d{1,2}.\d\d/).index;
+			string = /\d\d.\d\d/.test(string)
+				? string.slice(0, index) +
+				  this.wrapInSpan(
+						string.slice(index, index + 2) + ':' + string.slice(index + 3, index + 5)
+				  ) +
+				  string.slice(index + 5)
+				: string.slice(0, index) +
+				  this.wrapInSpan(
+						string.slice(index, index + 1) + ':' + string.slice(index + 2, index + 4)
+				  ) +
+				  string.slice(index + 4);
 		}
 		return string;
 	}
@@ -109,5 +119,8 @@ class Translator {
 		return handleDot(titleCorrectedArray);
 	}
 }
+
+const a = new Translator();
+a.britishToAmerican('Tea time is usually around 4 or 4.30.');
 
 module.exports = Translator;
