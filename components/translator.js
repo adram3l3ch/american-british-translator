@@ -22,36 +22,22 @@ class Translator {
 		return `<span class="highlight">${word}</span>`;
 	}
 
-	britishTime(string) {
-		if (/\d{1,2}:\d\d/.test(string)) {
-			let index = string.match(/\d{1,2}:\d\d/).index;
-			string = /\d\d.\d\d/.test(string)
+	convertTime(string, regExp1, regExp2, separator) {
+		if (regExp1.test(string)) {
+			let index = string.match(regExp1).index;
+			string = regExp2.test(string)
 				? string.slice(0, index) +
 				  this.wrapInSpan(
-						string.slice(index, index + 2) + '.' + string.slice(index + 3, index + 5)
+						string.slice(index, index + 2) +
+							separator +
+							string.slice(index + 3, index + 5)
 				  ) +
 				  string.slice(index + 5)
 				: string.slice(0, index) +
 				  this.wrapInSpan(
-						string.slice(index, index + 1) + '.' + string.slice(index + 2, index + 4)
-				  ) +
-				  string.slice(index + 4);
-		}
-		return string;
-	}
-
-	americanTime(string) {
-		if (/\d{1,2}.\d\d/.test(string)) {
-			let index = string.match(/\d{1,2}.\d\d/).index;
-			string = /\d\d.\d\d/.test(string)
-				? string.slice(0, index) +
-				  this.wrapInSpan(
-						string.slice(index, index + 2) + ':' + string.slice(index + 3, index + 5)
-				  ) +
-				  string.slice(index + 5)
-				: string.slice(0, index) +
-				  this.wrapInSpan(
-						string.slice(index, index + 1) + ':' + string.slice(index + 2, index + 4)
+						string.slice(index, index + 1) +
+							separator +
+							string.slice(index + 2, index + 4)
 				  ) +
 				  string.slice(index + 4);
 		}
@@ -72,6 +58,12 @@ class Translator {
 		return string;
 	}
 
+	titleCase(string) {
+		return string[0] === '<'
+			? string.slice(0, 24) + string[24].toUpperCase() + string.slice(25)
+			: string[0].toUpperCase() + string.slice(1);
+	}
+
 	fullStopHandler(string) {
 		let dot = false;
 		if (string.at(-1) === '.') {
@@ -80,19 +72,17 @@ class Translator {
 		}
 		return {
 			string,
-			handleDot(wordArray) {
+			handleDot(wordArray, self) {
 				let result;
 				if (dot) result = wordArray.join(' ') + '.';
 				else result = wordArray.join(' ');
-				return result[0] === '<'
-					? result.slice(0, 24) + result[24].toUpperCase() + result.slice(25)
-					: result[0].toUpperCase() + result.slice(1);
+				return self.titleCase(result);
 			},
 		};
 	}
 
 	britishToAmerican(british) {
-		british = this.americanTime(british);
+		british = this.convertTime(british, /\d{1,2}.\d\d/, /\d\d.\d\d/, ':');
 		const { string, handleDot } = this.fullStopHandler(british);
 		british = this.translateWord(string, britishOnly);
 		const wordArray = british.split(' ');
@@ -100,11 +90,11 @@ class Translator {
 		const titleCorrectedArray = spellingCorrectedArray.map(word =>
 			this.britishToAmericanTitle(word)
 		);
-		return handleDot(titleCorrectedArray);
+		return handleDot(titleCorrectedArray, this);
 	}
 
 	americanToBritish(american) {
-		american = this.britishTime(american);
+		american = this.convertTime(american, /\d{1,2}:\d\d/, /\d\d:\d\d/, '.');
 		const { string, handleDot } = this.fullStopHandler(american);
 		american = this.translateWord(string, americanOnly);
 		const wordArray = american.split(' ');
@@ -116,11 +106,8 @@ class Translator {
 		const titleCorrectedArray = spellingCorrectedArray.map(word =>
 			americanToBritishTitles[word] ? this.wrapInSpan(americanToBritishTitles[word]) : word
 		);
-		return handleDot(titleCorrectedArray);
+		return handleDot(titleCorrectedArray, this);
 	}
 }
-
-const a = new Translator();
-a.britishToAmerican('Tea time is usually around 4 or 4.30.');
 
 module.exports = Translator;
