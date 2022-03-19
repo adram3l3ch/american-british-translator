@@ -72,11 +72,11 @@ class Translator {
 		}
 		return {
 			string,
-			handleDot(wordArray, self) {
+			handleDot: wordArray => {
 				let result;
 				if (dot) result = wordArray.join(' ') + '.';
 				else result = wordArray.join(' ');
-				return self.titleCase(result);
+				return this.titleCase(result);
 			},
 		};
 	}
@@ -90,7 +90,7 @@ class Translator {
 		const titleCorrectedArray = spellingCorrectedArray.map(word =>
 			this.britishToAmericanTitle(word)
 		);
-		return handleDot(titleCorrectedArray, this);
+		return handleDot(titleCorrectedArray);
 	}
 
 	americanToBritish(american) {
@@ -106,7 +106,7 @@ class Translator {
 		const titleCorrectedArray = spellingCorrectedArray.map(word =>
 			americanToBritishTitles[word] ? this.wrapInSpan(americanToBritishTitles[word]) : word
 		);
-		return handleDot(titleCorrectedArray, this);
+		return handleDot(titleCorrectedArray);
 	}
 }
 
