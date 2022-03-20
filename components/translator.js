@@ -4,18 +4,9 @@ const americanToBritishTitles = require('./american-to-british-titles.js');
 const britishOnly = require('./british-only.js');
 
 class Translator {
-	britishToAmericanSpelling(word) {
-		const index = Object.values(americanToBritishSpelling).indexOf(word);
-		return index < 0
-			? word
-			: this.wrapInSpan(Object.entries(americanToBritishSpelling)[index][0]);
-	}
-
-	britishToAmericanTitle(word) {
-		const index = Object.values(americanToBritishTitles).indexOf(word);
-		return index < 0
-			? word
-			: this.wrapInSpan(Object.entries(americanToBritishTitles)[index][0]);
+	americanWords(word, dict) {
+		const index = Object.values(dict).indexOf(word);
+		return index < 0 ? word : this.wrapInSpan(Object.entries(dict)[index][0]);
 	}
 
 	wrapInSpan(word) {
@@ -86,9 +77,11 @@ class Translator {
 		const { string, handleDot } = this.fullStopHandler(british);
 		british = this.translateWord(string, britishOnly);
 		const wordArray = british.split(' ');
-		const spellingCorrectedArray = wordArray.map(word => this.britishToAmericanSpelling(word));
+		const spellingCorrectedArray = wordArray.map(word =>
+			this.americanWords(word, americanToBritishSpelling)
+		);
 		const titleCorrectedArray = spellingCorrectedArray.map(word =>
-			this.britishToAmericanTitle(word)
+			this.americanWords(word, americanToBritishTitles)
 		);
 		return handleDot(titleCorrectedArray);
 	}
@@ -109,5 +102,9 @@ class Translator {
 		return handleDot(titleCorrectedArray);
 	}
 }
+
+let a = new Translator();
+let b = a.britishToAmerican('We watched the footie match for a while.');
+console.log(b);
 
 module.exports = Translator;
